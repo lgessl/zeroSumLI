@@ -1,17 +1,21 @@
 [![R-Package Build Status](https://github.com/rehbergt/zeroSum/workflows/R-CMD-check/badge.svg)](https://github.com/rehbergt/zeroSum/actions)
 
 
-## News: Version 2.0
-* Improved support for multinomial logistic and Cox proportional hazards regression.
-* Improved performance (runtime avx detection and multithreading support now also available for macOS).
-* The function zeroSumCVFit() and zeroSumFit() have been merged to zeroSum().
-* The function arguments have been renamed to correspond to the glmnet R package.
-  Please see the description below and the examples shown in the corresponding
-  example section.
+## This fork wants to make zeroSum ready for late integration
 
+When integrating late in machine learning (i.e. taking the output of an early model as the input feature of another, "later" model), one has to continue the cross validation of the early-stage model. Otherwise, one might run into serious overfitting.
+
+So far, `zeroSum::zeroSum()`
+only returns the predictions on the left-out folds, i.e. one vector of `N` (number of samples) predictions per penalty parameter $\lambda$. 
+This forks extends zeroSum and makes it return one `N`x`nFold` matrix per $\lambda$ (in the `family = "multinomial"` case even one `N`x`nFold`x`K` 
+tensor per $\lambda$). We do this via a new attribute `full_cv_predict` in the `zeroSum` object and an optional parameter `fullCvPredict` in `zeroSum::zeroSum()`. 
+If `fullCvPredict` is set to `TRUE`, `full_cv_predict` will be a list of the described matrices/tensors; if `fullCvPredict == FALSE`, the default, 
+`full_cv_predict` will be an empty list. 
+
+The performance of `zeroSum::zeroSum()` isn't impacted notably, and it isn't impacted at all
+if `fullCvPredict == TRUE`.
 
 # Introduction: The R-Package zeroSum
-
 
 *zeroSum* is an R-package for fitting scale invariant and thereby
 reference point insensitive log-linear models by imposing the zero-sum
@@ -57,19 +61,21 @@ with or without the zero-sum constraint can be easily compared.
 **Please note that the zero-sum constraint only yields reference point insensitive models on log transformed data!**
 
 # Table of contents
-  * [Installation](#installation)
-    * [Dependencies](#dependencies)
-    * [Windows](#windows)
-    * [Linux and macOS](#linux-and-macos)
-    * [Devtools](#devtools)
-    * [Manual building from source](#manually-building-from-source)
-  * [Quick start](#quick-start)
-  * [Supported regression types](#supported-regression-types)
-  * [FAQ](#faq)
-  * [Standalone HPC version](#standalone-hpc-version)
-      * [Build instructions](#build-instructions)
-      * [Basic usage](#basic-usage)
-  * [References](#references)
+- [Introduction: The R-Package zeroSum](#introduction-the-r-package-zerosum)
+- [Table of contents](#table-of-contents)
+- [Installation](#installation)
+  - [Dependencies](#dependencies)
+  - [Windows](#windows)
+  - [Linux and macOS](#linux-and-macos)
+  - [Devtools](#devtools)
+  - [Manually building from source](#manually-building-from-source)
+- [Quick start](#quick-start)
+- [Supported regression types](#supported-regression-types)
+- [FAQ](#faq)
+- [Standalone HPC version](#standalone-hpc-version)
+  - [Build instructions](#build-instructions)
+    - [Basic usage](#basic-usage)
+  - [References](#references)
 
 
 # Installation
