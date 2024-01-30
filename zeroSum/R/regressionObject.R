@@ -97,6 +97,12 @@ regressionObject <- function(x, y, type, alpha, lambda, lambdaSteps, weights,
         data$seed <- sample(.Machine$integer.max, size = 1)
     }
 
+    if (methods::hasArg("fullCvPredict")) {
+        fullCvPredict <- args$fullCvPredict
+    } else {
+        fullCvPredict <- FALSE
+    }
+
     checkType(type)
     id <- which(zeroSumTypes[, 1] == type)
     data$type <- as.integer(zeroSumTypes[id, 2])
@@ -401,6 +407,7 @@ regressionObject <- function(x, y, type, alpha, lambda, lambdaSteps, weights,
 
     data$rotatedUpdates <- checkInteger(rotatedUpdates)
     data$usePolish <- checkInteger(usePolish)
+    data$fullCvPredict <- checkInteger(fullCvPredict)
 
     return(data)
 }

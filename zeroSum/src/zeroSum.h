@@ -328,6 +328,13 @@ class zeroSum {
      * search and simulated annealing */
     double downScaler;
 
+    /** If set to true, the doCVRegression() method returns predictions for all
+     * samples and folds, not just for the left-out fold. In this case, we 
+     * append an N * K * nFold1 tensor to cv_predict for every lambda, namely
+     * xTimesBeta.
+    */
+    bool fullCvPredict;
+
     /** Defines the number of threads, which should be used  */
     uint32_t threads = 1;
 
@@ -533,6 +540,7 @@ class zeroSum {
             double cSum,
             double alpha,
             double downScaler,
+            bool fullCvPredict,
             uint32_t threads,
             uint32_t seed);
 

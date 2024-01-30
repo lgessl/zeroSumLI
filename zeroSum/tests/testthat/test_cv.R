@@ -11,7 +11,7 @@ test_that("cross validation okay", {
     )
     A <- zeroSum(x, y,
         family = "gaussian", zeroSum = FALSE, foldid = fi,
-        standardize = FALSE, threads = 1
+        standardize = FALSE, threads = 1, fullCvPredict = TRUE
     )
     B <- zeroSum(x, y,
         family = "gaussian", foldid = fi,
@@ -20,7 +20,7 @@ test_that("cross validation okay", {
     y <- exampleData$ylogistic
     C <- zeroSum(x, y,
         family = "binomial", zeroSum = FALSE,
-        foldid = fi, standardize = FALSE
+        foldid = fi, standardize = FALSE, fullCvPredict = TRUE
     )
     D <- zeroSum(x, y,
         family = "binomial", zeroSum = FALSE,
@@ -36,15 +36,14 @@ test_that("cross validation okay", {
     set.seed(1)
     H <- zeroSum(x, y,
         family = "cox", foldid = fi, zeroSum = FALSE,
-        threads = 4
+        threads = 4, fullCvPredict = TRUE
     )
 
-    ref <- readRDS("references.rds")
+    ref <- readRDS(test_path("references.rds"))
     expect_equal(ref$test_cv$A$cv_stats, A$cv_stats, tolerance = 1e-1)
     expect_equal(ref$test_cv$B$cv_stats, B$cv_stats, tolerance = 1e-1)
     expect_equal(ref$test_cv$C$cv_stats, C$cv_stats, tolerance = 1e-1)
     expect_equal(ref$test_cv$D$cv_stats, D$cv_stats, tolerance = 1e-1)
-
 
     expect_equal(G$cv_stats, H$cv_stats, tolerance = 1e-10)
     expect_equal(ref$test_cv$F$cv_stats[1:68, ], G$cv_stats[1:68, ],
@@ -54,4 +53,16 @@ test_that("cross validation okay", {
         tolerance = 1e-1
     )
     expect_equal(ref$test_cv$glmnetCoefs, as.numeric(coef(G)), tolerance = 1e-1)
+
+    n_test <- 5
+    fi_test <- sample(unique(fi), n_test)
+    for (i in seq(n_test)) {
+        fit <- list(A, C, H)[[i%%3 + 1]]
+        expect_equal(length(fit$full_cv_predict), length(fit$cv_predict))
+        lambda_test <- sample(length(fit$cv_predict), 1)
+        expect_equal(
+            fit$cv_predict[[lambda_test[i]]][fi == fi_test[i], ],
+            fit$full_cv_predict[[lambda_test[i]]][fi == fi_test[i], fi_test[i]]
+        )
+    }
 })

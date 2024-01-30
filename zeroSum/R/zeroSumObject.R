@@ -11,12 +11,33 @@ zeroSumObject <- function(obj) {
     K <- obj$K
     P <- obj$P
     N <- obj$N
+    nFold <- obj$nFold
 
-    tmp <- matrix(obj$result, ncol = (5 + K * (P + 1) + N * K), byrow = TRUE)
+    nCol <- 5 + K * (P + 1) + N * K
+    nColFull <- nCol
+    if (obj$fullCvPredict) {
+        nColFull <- nCol + N * K * nFold
+    }
+    tmp <- matrix(obj$result, ncol = nColFull, byrow = TRUE)
     if (nrow(tmp) == 0) {
         stop("Detected empty result! Returning NULL")
         return(NULL)
     }
+
+    full_cv_predict <- list()
+    if (obj$fullCvPredict) {
+        tmp1 <- tmp[, -seq(nCol), drop = FALSE]
+        full_cv_predict <- vector("list", nrow(tmp))
+        for (i in seq(nrow(tmp1))) {
+            if (K == 1) {
+                full_cv_predict[[i]] <- matrix(tmp1[i, ], ncol = nFold)
+            } else {
+                full_cv_predict[[i]] <- array(tmp1[i, ], dim = c(N, K, nFold))
+            }
+        }
+        tmp <- tmp[, -seq(nCol + 1, nColFull), drop = FALSE]
+    }
+    obj$full_cv_predict <- full_cv_predict
 
     cv_predict <- tmp[, -c(1:(5 + K * (P + 1))), drop = FALSE]
 

@@ -192,6 +192,17 @@ std::vector<double> zeroSum::doCVRegression(char* path,
                 for (uint32_t k = 0; k < N * K; k++)
                     fprintf(file, "%a,", cv_predict[k]);
 
+                if (fullCvPredict) {
+                    for (uint32_t f = 0; f < nFold; f++) {
+                        for (uint32_t l = 0; l < K; l++) {
+                            for(uint32_t i = 0; i < N; i++) {
+                                fprintf(file, "%a,", xTimesBeta[
+                                    INDEX_TENSOR(i, l, f, memory_N, K)]);
+                            }
+                        }
+                    }
+                }
+
                 fprintf(file, "\n");
                 fclose(file);
             } else {
@@ -219,6 +230,18 @@ std::vector<double> zeroSum::doCVRegression(char* path,
 
                 for (uint32_t k = 0; k < N * K; k++)
                     cv_stats.push_back(cv_predict[k]);
+                
+                if (fullCvPredict) {
+                    cv_stats.reserve(cv_stats.size() + N * K * nFold);
+                    for (uint32_t f = 0; f < nFold; f++) {
+                        for (uint32_t l = 0; l < K; l++) {
+                            for(uint32_t i = 0; i < N; i++) {
+                                cv_stats.push_back(xTimesBeta[
+                                    INDEX_TENSOR(i, l, f, memory_N, K)]);
+                            }
+                        }
+                    }
+                }
             }
 
             if (verbose) {

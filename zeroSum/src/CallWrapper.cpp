@@ -47,6 +47,7 @@ zeroSum rListToRegressionData(SEXP& _dataObjects) {
     SEXP _cvStop = getElementFromRList(_dataObjects, "cvStop");
     SEXP _useFusion = getElementFromRList(_dataObjects, "useFusion");
     SEXP _isZerosum = getElementFromRList(_dataObjects, "useZeroSum");
+    SEXP _fullCvPredict = getElementFromRList(_dataObjects, "fullCvPredict");
 
     uint32_t N = (uint32_t)INTEGER(GET_DIM(_x))[0];
     uint32_t P = (uint32_t)INTEGER(GET_DIM(_x))[1];
@@ -69,6 +70,7 @@ zeroSum rListToRegressionData(SEXP& _dataObjects) {
     double cSum = REAL(_cSum)[0];
     double alpha = REAL(_alpha)[0];
     double downScaler = REAL(_downScaler)[0];
+    bool fullCvPredict = (uint32_t)INTEGER(_fullCvPredict)[0];
 
     uint32_t threads = (uint32_t)INTEGER(_threads)[0];
     uint32_t seed = (uint32_t)INTEGER(_seed)[0];
@@ -76,7 +78,7 @@ zeroSum rListToRegressionData(SEXP& _dataObjects) {
     zeroSum data(N, P, K, nc, type, useZeroSum, useFusion, useIntercept,
                  useApprox, useCentering, useStandardization, usePolish,
                  rotatedUpdates, precision, algorithm, nFold, cvStop, verbose,
-                 cSum, alpha, downScaler, threads, seed);
+                 cSum, alpha, downScaler, fullCvPredict, threads, seed);
 
     double* lambdaSeq = REAL(_lambdaSeq);
 

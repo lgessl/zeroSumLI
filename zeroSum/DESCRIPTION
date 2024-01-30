@@ -21,5 +21,5 @@ VignetteBuilder: knitr
 License: MIT + file LICENSE
 NeedsCompilation: yes
 LazyData: yes
-RoxygenNote: 7.1.0
+RoxygenNote: 7.2.3
 Encoding: UTF-8

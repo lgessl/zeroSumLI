@@ -104,6 +104,7 @@ zeroSum::zeroSum(uint32_t N,
                  double cSum,
                  double alpha,
                  double downScaler,
+                 bool fullCvPredict,
                  uint32_t threads,
                  uint32_t seed)
     : N(N),
@@ -127,6 +128,7 @@ zeroSum::zeroSum(uint32_t N,
       cSum(cSum),
       alpha(alpha),
       downScaler(downScaler),
+      fullCvPredict(fullCvPredict),
       threads(threads),
       parallel(threads),
       seed(seed) {
@@ -244,6 +246,7 @@ void zeroSum::shallowCopy(const zeroSum& source) {
     cSum = source.cSum;
     alpha = source.alpha;
     downScaler = source.downScaler;
+    fullCvPredict = source.fullCvPredict;
     threads = source.threads;
     seed = source.seed;
 
