@@ -25,17 +25,18 @@ zeroSumObject <- function(obj) {
     }
 
     full_cv_predict <- list()
-    if (obj$fullCvPredict) {
+    if (obj$fullCvPredict) { 
         tmp1 <- tmp[, -seq(nCol), drop = FALSE]
         full_cv_predict <- vector("list", nrow(tmp))
         for (i in seq(nrow(tmp1))) {
             if (K == 1) {
                 full_cv_predict[[i]] <- matrix(tmp1[i, ], ncol = nFold)
             } else {
-                full_cv_predict[[i]] <- array(tmp1[i, ], dim = c(N, K, nFold))
+                full_cv_predict[[i]] <- array(tmp1[i, ], 
+                    dim = c(N, K, nFold))
             }
         }
-        tmp <- tmp[, -seq(nCol + 1, nColFull), drop = FALSE]
+        tmp <- tmp[, seq(nCol), drop = FALSE]
     }
     obj$full_cv_predict <- full_cv_predict
 
