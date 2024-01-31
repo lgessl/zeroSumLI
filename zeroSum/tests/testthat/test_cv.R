@@ -31,11 +31,16 @@ test_that("cross validation okay", {
     set.seed(1)
     G <- zeroSum(x, y,
         family = "cox", foldid = fi, zeroSum = FALSE,
-        threads = 1
+        threads = 1, fullCvPredict = TRUE
     )
     set.seed(1)
     H <- zeroSum(x, y,
         family = "cox", foldid = fi, zeroSum = FALSE,
+        threads = 4
+    )
+    y <- exampleData$yMultinomial
+    I <- zeroSum(x, y,
+        family = "multinomial", foldid = fi, zeroSum = FALSE,
         threads = 4, fullCvPredict = TRUE
     )
 
@@ -54,15 +59,21 @@ test_that("cross validation okay", {
     )
     expect_equal(ref$test_cv$glmnetCoefs, as.numeric(coef(G)), tolerance = 1e-1)
 
-    n_test <- 5
-    fi_test <- sample(unique(fi), n_test)
-    for (i in seq(n_test)) {
-        fit <- list(A, C, H)[[i%%3 + 1]]
-        expect_equal(length(fit$full_cv_predict), length(fit$cv_predict))
-        lambda_test <- sample(length(fit$cv_predict), 1)
-        expect_equal(
-            fit$cv_predict[[lambda_test[i]]][fi == fi_test[i], ],
-            fit$full_cv_predict[[lambda_test[i]]][fi == fi_test[i], fi_test[i]]
-        )
-    }
+    # fullCvPredict = TRUE
+    expect_equal(
+        A$cv_predict[[13]][A$foldid == 8, ],
+        A$full_cv_predict[[13]][A$foldid == 8, 8]
+    )
+    expect_equal(
+        C$cv_predict[[11]][C$foldid == 3, ],
+        C$full_cv_predict[[11]][C$foldid == 3, 3]
+    )
+    expect_equal(
+        G$cv_predict[[2]][G$foldid == 4, ],
+        G$full_cv_predict[[2]][G$foldid == 4, 4]
+    )
+    expect_equal(
+        I$cv_predict[[8]][I$foldid == 7, ],
+        I$full_cv_predict[[8]][I$foldid == 7, , 7]
+    )
 })

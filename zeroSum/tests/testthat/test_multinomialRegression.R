@@ -1,7 +1,7 @@
 context("Testing multinomial regression")
 
 test_that("multinomial regression equals glmnet", {
-    ref <- readRDS("references.rds")
+    ref <- readRDS(test_path("references.rds"))
     x <- log2(exampleData$x)
     y <- exampleData$yMultinomial
     P <- ncol(x)
@@ -13,7 +13,7 @@ test_that("multinomial regression equals glmnet", {
     ## multinomial Regression
     A <- zeroSum(x, y, alpha, lambda,
         standardize = FALSE,
-        family = "multinomial", zeroSum = FALSE
+        family = "multinomial", zeroSum = FALSE, fullCvPredict = TRUE
     )
     eA <- extCostFunction(x, y, coef(A), alpha, lambda, family = "multinomial")
 
@@ -55,6 +55,8 @@ test_that("multinomial regression equals glmnet", {
         as.numeric(coef(A)[-1, ]),
         as.numeric(ref$test_multi$A[-1, ])
     ), 1.0, tolerance = 0.05)
+
+    expect_equal(dim(A$full_cv_predict[[1]]), c(31, 3, 0))
 
 
     # ## multinomial Regression zerosum

@@ -3,16 +3,17 @@
 
 ## This fork wants to make zeroSum ready for late integration
 
-When integrating late in machine learning (i.e. taking the output of an early model as the input feature of another, "later" model), one has to continue the cross validation of the early-stage model. Otherwise, one might run into serious overfitting.
+When integrating late in machine learning (i.e. taking the output of an early model as the input feature of another, "later" model), one wants to continue 
+the cross validation of the early-stage model.
 
 So far, `zeroSum::zeroSum()`
 only returns the predictions on the left-out folds, i.e. one vector of `N` (number of samples) predictions per penalty parameter $\lambda$. 
-This forks extends zeroSum and makes it return one `N`x`nFold` matrix per $\lambda$ (in the `family = "multinomial"` case even one `N`x`nFold`x`K` 
+This fork extends zeroSum and makes it return one `N`x`nFold` matrix per $\lambda$ (in the `family = "multinomial"` case even one `N`x`nFold`x`K` 
 tensor per $\lambda$). We do this via a new attribute `full_cv_predict` in the `zeroSum` object and an optional parameter `fullCvPredict` in `zeroSum::zeroSum()`. 
 If `fullCvPredict` is set to `TRUE`, `full_cv_predict` will be a list of the described matrices/tensors; if `fullCvPredict == FALSE`, the default, 
 `full_cv_predict` will be an empty list. 
 
-The performance of `zeroSum::zeroSum()` isn't impacted notably, and it isn't impacted at all
+The performance of `zeroSum::zeroSum()` isn't compromised notably: the C++ backend needs to do no additional calculations, just more writing is necessary. It isn't impacted at all
 if `fullCvPredict == TRUE`.
 
 # Introduction: The R-Package zeroSum

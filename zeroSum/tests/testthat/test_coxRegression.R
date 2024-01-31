@@ -11,7 +11,7 @@ test_that("cox regression test", {
 
     A <- zeroSum(x, y, alpha, lambda,
         family = "cox", standardize = FALSE,
-        weights = w, zeroSum = FALSE
+        weights = w, zeroSum = FALSE, fullCvPredict = TRUE
     )
     eA <- extCostFunction(x, y, coef(A), alpha, lambda, family = "cox")
 
@@ -47,11 +47,12 @@ test_that("cox regression test", {
     expect_equal(cor(as.numeric(coef(A)), as.numeric(ref$test_cox$A)), 1.0,
         tolerance = 1e-3
     )
+    expect_equal(dim(A$full_cv_predict[[1]]), c(0, 0))
 
 
     B <- zeroSum(x, y, alpha, lambda,
         standardize = FALSE,
-        family = "cox"
+        family = "cox", fullCvPredict = TRUE
     )
     eB <- extCostFunction(x, y, coef(B), alpha, lambda, family = "cox")
 

@@ -11,7 +11,7 @@ test_that("linear regression equals glmnet", {
     ## linear Regression
     A <- zeroSum(x, y, alpha, lambda,
         algorithm = "CD", standardize = FALSE,
-        family = "gaussian", zeroSum = FALSE
+        family = "gaussian", zeroSum = FALSE, fullCvPredict = TRUE
     )
     eA <- extCostFunction(x, y, coef(A), alpha, lambda, family = "gaussian")
 
@@ -38,12 +38,14 @@ test_that("linear regression equals glmnet", {
         1.0,
         tolerance = 1e-5
     )
+    
+    expect_equal(dim(A$full_cv_predict[[1]]), c(0, 0))
 
 
     ## linear Regression zerosum
     B <- zeroSum(x, y, alpha, lambda,
         algorithm = "CD", standardize = FALSE,
-        family = "gaussian"
+        family = "gaussian", cvPredict = TRUE
     )
     eB <- extCostFunction(x, y, coef(B), alpha, lambda, family = "gaussian")
 

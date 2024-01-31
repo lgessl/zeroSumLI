@@ -11,7 +11,7 @@ test_that("logistic regression equals glmnet", {
     ## logistic Regression
     A <- zeroSum(x, y, alpha, lambda,
         algorithm = "CD", standardize = FALSE,
-        family = "binomial", zeroSum = FALSE
+        family = "binomial", zeroSum = FALSE, fullCvPredict = TRUE
     )
     eA <- extCostFunction(x, y, coef(A), alpha, lambda, family = "binomial")
 
@@ -49,6 +49,8 @@ test_that("logistic regression equals glmnet", {
     expect_equal(cor(as.numeric(coef(A)), ref$test_logistic$A), 1.0,
         tolerance = 1e-3
     )
+
+    expect_equal(dim(A$full_cv_predict[[1]]), c(0, 0))
 
 
     ## logistic Regression zerosum
